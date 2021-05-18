@@ -284,6 +284,9 @@ public class QuartzSchedulerThread extends Thread {
 
                     clearSignaledSchedulingChange();
                     try {
+                        /**
+                         * 获取待触发的触发器
+                         */
                         triggers = qsRsrcs.getJobStore().acquireNextTriggers(now + idleWaitTime, Math.min(availThreadCount, qsRsrcs.getMaxBatchSize()), qsRsrcs.getBatchTimeWindow());
                         acquiresFailed = 0;
                         if (log.isDebugEnabled())
@@ -370,7 +373,6 @@ public class QuartzSchedulerThread extends Thread {
                             TriggerFiredResult result =  bndles.get(i);
                             TriggerFiredBundle bndle =  result.getTriggerFiredBundle();
                             Exception exception = result.getException();
-
                             if (exception instanceof RuntimeException) {
                                 getLog().error("RuntimeException while firing trigger " + triggers.get(i), exception);
                                 qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.get(i));
@@ -394,7 +396,7 @@ public class QuartzSchedulerThread extends Thread {
                                 continue;
                             }
 
-                            if (qsRsrcs.getThreadPool().runInThread(shell) == false) {
+                            if (!qsRsrcs.getThreadPool().runInThread(shell)) {
                                 // this case should never happen, as it is indicative of the
                                 // scheduler being shutdown or a bug in the thread pool or
                                 // a thread pool being used concurrently - which the docs

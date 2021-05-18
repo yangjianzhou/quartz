@@ -415,8 +415,7 @@ public interface Scheduler {
      *           if the Job or Trigger cannot be added to the Scheduler, or
      *           there is an internal Scheduler error.
      */
-    Date scheduleJob(JobDetail jobDetail, Trigger trigger)
-        throws SchedulerException;
+    Date scheduleJob(JobDetail jobDetail, Trigger trigger) throws SchedulerException;
 
     /**
      * Schedule the given <code>{@link org.quartz.Trigger}</code> with the

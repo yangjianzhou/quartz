@@ -797,8 +797,7 @@ public class StdSchedulerFactory implements SchedulerFactory {
             try {
                 jmxScheduler = (RemoteMBeanScheduler)loadHelper.loadClass(jmxProxyClass).newInstance();
             } catch (Exception e) {
-                throw new SchedulerConfigException(
-                        "Unable to instantiate RemoteMBeanScheduler class.", e);
+                throw new SchedulerConfigException("Unable to instantiate RemoteMBeanScheduler class.", e);
             }
 
             if (jmxObjectName == null) {
@@ -811,8 +810,7 @@ public class StdSchedulerFactory implements SchedulerFactory {
             try {
                 setBeanProps(jmxScheduler, tProps);
             } catch (Exception e) {
-                initException = new SchedulerException("RemoteMBeanScheduler class '"
-                        + jmxProxyClass + "' props could not be configured.", e);
+                initException = new SchedulerException("RemoteMBeanScheduler class '"+ jmxProxyClass + "' props could not be configured.", e);
                 throw initException;
             }
 
@@ -1100,7 +1098,6 @@ public class StdSchedulerFactory implements SchedulerFactory {
                 initException = new SchedulerException("JobStore SchedulerPlugin '" + plugInClass + "' props could not be configured.", e);
                 throw initException;
             }
-
             plugins[i] = plugin;
         }
 
@@ -1259,9 +1256,9 @@ public class StdSchedulerFactory implements SchedulerFactory {
             if (js instanceof JobStoreSupport) {
                 JobStoreSupport jjs = (JobStoreSupport)js;
                 jjs.setDbRetryInterval(dbFailureRetry);
-                if(threadsInheritInitalizersClassLoader)
+                if(threadsInheritInitalizersClassLoader) {
                     jjs.setThreadsInheritInitializersClassLoadContext(threadsInheritInitalizersClassLoader);
-                
+                }
                 jjs.setThreadExecutor(threadExecutor);
             }
 

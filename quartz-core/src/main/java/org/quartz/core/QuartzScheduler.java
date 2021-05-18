@@ -214,6 +214,9 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
 
         this.schedThread = new QuartzSchedulerThread(this, resources);
         ThreadExecutor schedThreadExecutor = resources.getThreadExecutor();
+        /**
+         * 开始调度任务
+         */
         schedThreadExecutor.execute(this.schedThread);
         if (idleWaitTime > 0) {
             this.schedThread.setIdleWaitTime(idleWaitTime);
@@ -826,9 +829,7 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         } else if (!trigger.getJobKey().equals(jobDetail.getKey())) {
             throw new SchedulerException( "Trigger does not reference given job!");
         }
-
         trig.validate();
-
         Calendar cal = null;
         if (trigger.getCalendarName() != null) {
             cal = resources.getJobStore().retrieveCalendar(trigger.getCalendarName());
@@ -836,10 +837,8 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         Date ft = trig.computeFirstFireTime(cal);
 
         if (ft == null) {
-            throw new SchedulerException(
-                    "Based on configured schedule, the given trigger '" + trigger.getKey() + "' will never fire.");
+            throw new SchedulerException("Based on configured schedule, the given trigger '" + trigger.getKey() + "' will never fire.");
         }
-
         resources.getJobStore().storeJobAndTrigger(jobDetail, trig);
         notifySchedulerListenersJobAdded(jobDetail);
         notifySchedulerThread(trigger.getNextFireTime().getTime());

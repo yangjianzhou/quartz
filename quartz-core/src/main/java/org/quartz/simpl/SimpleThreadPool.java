@@ -261,7 +261,6 @@ public class SimpleThreadPool implements ThreadPool {
             }
         }
 
-
         if (isThreadsInheritContextClassLoaderOfInitializingThread()) {
             getLog().info( "Job execution threads will use class loader of thread: " + Thread.currentThread().getName());
         }
@@ -407,9 +406,7 @@ public class SimpleThreadPool implements ThreadPool {
         if (runnable == null) {
             return false;
         }
-
         synchronized (nextRunnableLock) {
-
             handoffPending = true;
 
             // Wait until a worker thread is available
@@ -427,8 +424,7 @@ public class SimpleThreadPool implements ThreadPool {
             } else {
                 // If the thread pool is going down, execute the Runnable
                 // within a new additional worker thread (no thread from the pool).
-                WorkerThread wt = new WorkerThread(this, threadGroup,
-                        "WorkerThread-LastJob", prio, isMakeThreadsDaemons(), runnable);
+                WorkerThread wt = new WorkerThread(this, threadGroup,"WorkerThread-LastJob", prio, isMakeThreadsDaemons(), runnable);
                 busyWorkers.add(wt);
                 workers.add(wt);
                 wt.start();

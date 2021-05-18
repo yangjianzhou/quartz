@@ -130,8 +130,7 @@ public interface JobStore {
      *           if a <code>Job</code> with the same name/group already
      *           exists.
      */
-    void storeJobAndTrigger(JobDetail newJob, OperableTrigger newTrigger) 
-        throws ObjectAlreadyExistsException, JobPersistenceException;
+    void storeJobAndTrigger(JobDetail newJob, OperableTrigger newTrigger) throws ObjectAlreadyExistsException, JobPersistenceException;
 
     /**
      * Store the given <code>{@link org.quartz.JobDetail}</code>.
@@ -146,8 +145,7 @@ public interface JobStore {
      *           if a <code>Job</code> with the same name/group already
      *           exists, and replaceExisting is set to false.
      */
-    void storeJob(JobDetail newJob, boolean replaceExisting) 
-        throws ObjectAlreadyExistsException, JobPersistenceException;
+    void storeJob(JobDetail newJob, boolean replaceExisting) throws ObjectAlreadyExistsException, JobPersistenceException;
 
     public void storeJobsAndTriggers(Map<JobDetail, Set<? extends Trigger>> triggersAndJobs, boolean replace)
         throws ObjectAlreadyExistsException, JobPersistenceException;

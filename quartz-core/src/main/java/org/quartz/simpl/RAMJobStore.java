@@ -405,8 +405,7 @@ public class RAMJobStore implements JobStore {
      *
      * @see #pauseTriggers(org.quartz.impl.matchers.GroupMatcher)
      */
-    public void storeTrigger(OperableTrigger newTrigger,
-            boolean replaceExisting) throws JobPersistenceException {
+    public void storeTrigger(OperableTrigger newTrigger,boolean replaceExisting) throws JobPersistenceException {
         TriggerWrapper tw = new TriggerWrapper((OperableTrigger)newTrigger.clone());
 
         synchronized (lock) {
@@ -414,7 +413,6 @@ public class RAMJobStore implements JobStore {
                 if (!replaceExisting) {
                     throw new ObjectAlreadyExistsException(newTrigger);
                 }
-    
                 removeTrigger(newTrigger.getKey(), false);
             }
     
@@ -1837,8 +1835,9 @@ class TriggerWrapper {
     public static final int STATE_ERROR = 7;
     
     TriggerWrapper(OperableTrigger trigger) {
-        if(trigger == null)
+        if(trigger == null) {
             throw new IllegalArgumentException("Trigger cannot be null!");
+        }
         this.trigger = trigger;
         key = trigger.getKey();
         this.jobKey = trigger.getJobKey();
