@@ -244,8 +244,7 @@ public class StdScheduler implements Scheduler {
      * Calls the equivalent method on the 'proxied' <code>QuartzScheduler</code>.
      * </p>
      */
-    public Date scheduleJob(JobDetail jobDetail, Trigger trigger)
-        throws SchedulerException {
+    public Date scheduleJob(JobDetail jobDetail, Trigger trigger) throws SchedulerException {
         return sched.scheduleJob(jobDetail, trigger);
     }
 

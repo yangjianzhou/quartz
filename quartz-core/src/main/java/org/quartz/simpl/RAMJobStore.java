@@ -419,9 +419,7 @@ public class RAMJobStore implements JobStore {
             }
     
             if (retrieveJob(newTrigger.getJobKey()) == null) {
-                throw new JobPersistenceException("The job ("
-                        + newTrigger.getJobKey()
-                        + ") referenced by the trigger does not exist.");
+                throw new JobPersistenceException("The job (" + newTrigger.getJobKey() + ") referenced by the trigger does not exist.");
             }
 
             // add to triggers by job
@@ -442,8 +440,7 @@ public class RAMJobStore implements JobStore {
             // add to triggers by FQN map
             triggersByKey.put(tw.key, tw);
 
-            if (pausedTriggerGroups.contains(newTrigger.getKey().getGroup())
-                    || pausedJobGroups.contains(newTrigger.getJobKey().getGroup())) {
+            if (pausedTriggerGroups.contains(newTrigger.getKey().getGroup()) || pausedJobGroups.contains(newTrigger.getJobKey().getGroup())) {
                 tw.state = TriggerWrapper.STATE_PAUSED;
                 if (blockedJobs.contains(tw.jobKey)) {
                     tw.state = TriggerWrapper.STATE_PAUSED_BLOCKED;

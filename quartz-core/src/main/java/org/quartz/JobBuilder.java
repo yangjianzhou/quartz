@@ -66,7 +66,7 @@ public class JobBuilder {
     
     private JobDataMap jobDataMap = new JobDataMap();
     
-    protected JobBuilder() {
+    public JobBuilder() {
     }
     
     /**

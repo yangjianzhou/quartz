@@ -62,6 +62,9 @@ public class InitThreadContextClassLoadHelper implements ClassLoadHelper {
      * thread, which is the thread that is initializing Quartz.
      */
     public void initialize() {
+        /**
+         * 获取类加载器
+         */
         initClassLoader = Thread.currentThread().getContextClassLoader();
     }
 

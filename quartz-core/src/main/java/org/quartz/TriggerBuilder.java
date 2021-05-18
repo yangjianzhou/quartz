@@ -74,7 +74,7 @@ public class TriggerBuilder<T extends Trigger> {
     
     private ScheduleBuilder<?> scheduleBuilder = null;
     
-    private TriggerBuilder() {
+    public TriggerBuilder() {
         
     }
     

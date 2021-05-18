@@ -82,6 +82,9 @@ public class CascadingClassLoadHelper implements ClassLoadHelper {
         loadHelpers.add(new LoadingLoaderClassLoadHelper());
         loadHelpers.add(new SimpleClassLoadHelper());
         loadHelpers.add(new ThreadContextClassLoadHelper());
+        /**
+         * 获取类加载器
+         */
         loadHelpers.add(new InitThreadContextClassLoadHelper());
         
         for(ClassLoadHelper loadHelper: loadHelpers) {

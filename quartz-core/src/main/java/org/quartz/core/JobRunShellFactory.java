@@ -48,8 +48,7 @@ public interface JobRunShellFactory {
      * the <code>JobExecutionContext</code> s within it.
      * </p>
      */
-    void initialize(Scheduler scheduler)
-        throws SchedulerConfigException;
+    void initialize(Scheduler scheduler) throws SchedulerConfigException;
 
     /**
      * <p>

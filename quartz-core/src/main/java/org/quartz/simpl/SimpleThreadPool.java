@@ -239,12 +239,10 @@ public class SimpleThreadPool implements ThreadPool {
             return;
         
         if (count <= 0) {
-            throw new SchedulerConfigException(
-                    "Thread count must be > 0");
+            throw new SchedulerConfigException("Thread count must be > 0");
         }
         if (prio <= 0 || prio > 9) {
-            throw new SchedulerConfigException(
-                    "Thread priority must be > 0 and <= 9");
+            throw new SchedulerConfigException("Thread priority must be > 0 and <= 9");
         }
 
         if(isThreadsInheritGroupOfInitializingThread()) {
@@ -265,9 +263,7 @@ public class SimpleThreadPool implements ThreadPool {
 
 
         if (isThreadsInheritContextClassLoaderOfInitializingThread()) {
-            getLog().info(
-                    "Job execution threads will use class loader of thread: "
-                            + Thread.currentThread().getName());
+            getLog().info( "Job execution threads will use class loader of thread: " + Thread.currentThread().getName());
         }
 
         // create the worker threads and start them

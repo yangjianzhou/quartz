@@ -369,47 +369,39 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         RemotableQuartzScheduler exportable = null;
 
         if(resources.getRMIServerPort() > 0) {
-            exportable = (RemotableQuartzScheduler) UnicastRemoteObject
-                .exportObject(this, resources.getRMIServerPort());
+            exportable = (RemotableQuartzScheduler) UnicastRemoteObject.exportObject(this, resources.getRMIServerPort());
         } else {
-            exportable = (RemotableQuartzScheduler) UnicastRemoteObject
-                .exportObject(this);
+            exportable = (RemotableQuartzScheduler) UnicastRemoteObject.exportObject(this);
         }
 
         Registry registry = null;
 
-        if (resources.getRMICreateRegistryStrategy().equals(
-                QuartzSchedulerResources.CREATE_REGISTRY_AS_NEEDED)) {
+        if (resources.getRMICreateRegistryStrategy().equals(QuartzSchedulerResources.CREATE_REGISTRY_AS_NEEDED)) {
             try {
                 // First try to get an existing one, instead of creating it,
                 // since if
                 // we're in a web-app being 'hot' re-depoloyed, then the JVM
                 // still
                 // has the registry that we created above the first time...
-                registry = LocateRegistry.getRegistry(resources
-                        .getRMIRegistryPort());
+                registry = LocateRegistry.getRegistry(resources.getRMIRegistryPort());
                 registry.list();
             } catch (Exception e) {
-                registry = LocateRegistry.createRegistry(resources
-                        .getRMIRegistryPort());
+                registry = LocateRegistry.createRegistry(resources.getRMIRegistryPort());
             }
         } else if (resources.getRMICreateRegistryStrategy().equals(
                 QuartzSchedulerResources.CREATE_REGISTRY_ALWAYS)) {
             try {
-                registry = LocateRegistry.createRegistry(resources
-                        .getRMIRegistryPort());
+                registry = LocateRegistry.createRegistry(resources.getRMIRegistryPort());
             } catch (Exception e) {
                 // Fall back to an existing one, instead of creating it, since
                 // if
                 // we're in a web-app being 'hot' re-depoloyed, then the JVM
                 // still
                 // has the registry that we created above the first time...
-                registry = LocateRegistry.getRegistry(resources
-                        .getRMIRegistryPort());
+                registry = LocateRegistry.getRegistry(resources.getRMIRegistryPort());
             }
         } else {
-            registry = LocateRegistry.getRegistry(resources
-                    .getRMIRegistryHost(), resources.getRMIRegistryPort());
+            registry = LocateRegistry.getRegistry(resources.getRMIRegistryHost(), resources.getRMIRegistryPort());
         }
 
         String bindName = resources.getRMIBindName();
@@ -526,8 +518,7 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
     public void start() throws SchedulerException {
 
         if (shuttingDown|| closed) {
-            throw new SchedulerException(
-                    "The Scheduler cannot be restarted after shutdown() has been called.");
+            throw new SchedulerException("The Scheduler cannot be restarted after shutdown() has been called.");
         }
 
         // QTZ-212 : calling new schedulerStarting() method on the listeners
@@ -544,8 +535,7 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
 
         schedThread.togglePause(false);
 
-        getLog().info(
-                "Scheduler " + resources.getUniqueIdentifier() + " started.");
+        getLog().info("Scheduler " + resources.getUniqueIdentifier() + " started.");
         
         notifySchedulerListenersStarted();
     }
@@ -810,8 +800,7 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
      *           if the Job or Trigger cannot be added to the Scheduler, or
      *           there is an internal Scheduler error.
      */
-    public Date scheduleJob(JobDetail jobDetail,
-            Trigger trigger) throws SchedulerException {
+    public Date scheduleJob(JobDetail jobDetail,Trigger trigger) throws SchedulerException {
         validateState();
 
         if (jobDetail == null) {
@@ -835,8 +824,7 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         if (trigger.getJobKey() == null) {
             trig.setJobKey(jobDetail.getKey());
         } else if (!trigger.getJobKey().equals(jobDetail.getKey())) {
-            throw new SchedulerException(
-                "Trigger does not reference given job!");
+            throw new SchedulerException( "Trigger does not reference given job!");
         }
 
         trig.validate();
@@ -2002,9 +1990,7 @@ J     *
             try {
                 sl.jobScheduled(trigger);
             } catch (Exception e) {
-                getLog().error(
-                        "Error while notifying SchedulerListener of scheduled job."
-                                + "  Triger=" + trigger.getKey(), e);
+                getLog().error("Error while notifying SchedulerListener of scheduled job." + "  Triger=" + trigger.getKey(), e);
             }
         }
     }

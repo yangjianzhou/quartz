@@ -83,8 +83,7 @@ public class JTAAnnotationAwareJobRunShellFactory implements JobRunShellFactory 
      * operations with the <code>JobStore</code>.
      * </p>
      */
-    public void initialize(Scheduler sched)
-        throws SchedulerConfigException {
+    public void initialize(Scheduler sched) throws SchedulerConfigException {
         this.scheduler = sched;
     }
 
