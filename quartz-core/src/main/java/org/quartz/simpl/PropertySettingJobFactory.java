@@ -73,6 +73,9 @@ public class PropertySettingJobFactory extends SimpleJobFactory {
         jobDataMap.putAll(bundle.getJobDetail().getJobDataMap());
         jobDataMap.putAll(bundle.getTrigger().getJobDataMap());
 
+        /**
+         * 通过反射注入值
+         */
         setBeanProps(job, jobDataMap);
         
         return job;

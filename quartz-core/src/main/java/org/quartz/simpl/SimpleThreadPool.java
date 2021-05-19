@@ -588,7 +588,7 @@ public class SimpleThreadPool implements ThreadPool {
                     }
 
                     if (runOnce) {
-                           run.set(false);
+                        run.set(false);
                         clearFromBusyWorkersList(this);
                     } else if(ran) {
                         ran = false;

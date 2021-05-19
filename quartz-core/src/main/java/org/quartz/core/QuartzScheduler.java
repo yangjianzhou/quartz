@@ -571,8 +571,7 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
     public void standby() {
         resources.getJobStore().schedulerPaused();
         schedThread.togglePause(true);
-        getLog().info(
-                "Scheduler " + resources.getUniqueIdentifier() + " paused.");
+        getLog().info( "Scheduler " + resources.getUniqueIdentifier() + " paused.");
         notifySchedulerListenersInStandbyMode();        
     }
 
@@ -586,8 +585,9 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
     }
 
     public Date runningSince() {
-        if(initialStart == null)
+        if(initialStart == null) {
             return null;
+        }
         return new Date(initialStart.getTime());
     }
 
@@ -1669,8 +1669,7 @@ J     *
      * </p>
      */
     public void addInternalTriggerListener(TriggerListener triggerListener) {
-        if (triggerListener.getName() == null
-                || triggerListener.getName().length() == 0) {
+        if (triggerListener.getName() == null || triggerListener.getName().length() == 0) {
             throw new IllegalArgumentException(
                     "TriggerListener name cannot be empty.");
         }
@@ -1781,8 +1780,7 @@ J     *
         return allListeners;
     }
 
-    private List<JobListener> buildJobListenerList()
-        throws SchedulerException {
+    private List<JobListener> buildJobListenerList() throws SchedulerException {
         List<JobListener> allListeners = new LinkedList<JobListener>();
         allListeners.addAll(getListenerManager().getJobListeners());
         allListeners.addAll(getInternalJobListeners());
@@ -1898,8 +1896,9 @@ J     *
         // notify all job listeners
         for(JobListener jl: jobListeners) {
             try {
-                if(!matchJobListener(jl, jec.getJobDetail().getKey()))
+                if(!matchJobListener(jl, jec.getJobDetail().getKey())) {
                     continue;
+                }
                 jl.jobToBeExecuted(jec);
             } catch (Exception e) {
                 SchedulerException se = new SchedulerException(
@@ -1918,8 +1917,9 @@ J     *
         // notify all job listeners
         for(JobListener jl: jobListeners) {
             try {
-                if(!matchJobListener(jl, jec.getJobDetail().getKey()))
+                if(!matchJobListener(jl, jec.getJobDetail().getKey())) {
                     continue;
+                }
                 jl.jobExecutionVetoed(jec);
             } catch (Exception e) {
                 SchedulerException se = new SchedulerException(
@@ -1930,21 +1930,19 @@ J     *
         }
     }
 
-    public void notifyJobListenersWasExecuted(JobExecutionContext jec,
-            JobExecutionException je) throws SchedulerException {
+    public void notifyJobListenersWasExecuted(JobExecutionContext jec, JobExecutionException je) throws SchedulerException {
         // build a list of all job listeners that are to be notified...
         List<JobListener> jobListeners = buildJobListenerList();
 
         // notify all job listeners
         for(JobListener jl: jobListeners) {
             try {
-                if(!matchJobListener(jl, jec.getJobDetail().getKey()))
+                if(!matchJobListener(jl, jec.getJobDetail().getKey())) {
                     continue;
+                }
                 jl.jobWasExecuted(jec, je);
             } catch (Exception e) {
-                SchedulerException se = new SchedulerException(
-                        "JobListener '" + jl.getName() + "' threw exception: "
-                                + e.getMessage(), e);
+                SchedulerException se = new SchedulerException( "JobListener '" + jl.getName() + "' threw exception: "+ e.getMessage(), e);
                 throw se;
             }
         }
@@ -2171,9 +2169,7 @@ J     *
             try {
                 sl.schedulerStarted();
             } catch (Exception e) {
-                getLog().error(
-                        "Error while notifying SchedulerListener of startup.",
-                        e);
+                getLog().error("Error while notifying SchedulerListener of startup.",e);
             }
         }
     }
@@ -2386,6 +2382,7 @@ class ErrorLogger extends SchedulerListenerSupport {
 /////////////////////////////////////////////////////////////////////////////
 
 class ExecutingJobsManager implements JobListener {
+
     HashMap<String, JobExecutionContext> executingJobs = new HashMap<String, JobExecutionContext>();
 
     AtomicInteger numJobsFired = new AtomicInteger(0);
@@ -2407,13 +2404,11 @@ class ExecutingJobsManager implements JobListener {
         numJobsFired.incrementAndGet();
 
         synchronized (executingJobs) {
-            executingJobs
-                    .put(((OperableTrigger)context.getTrigger()).getFireInstanceId(), context);
+            executingJobs.put(((OperableTrigger)context.getTrigger()).getFireInstanceId(), context);
         }
     }
 
-    public void jobWasExecuted(JobExecutionContext context,
-            JobExecutionException jobException) {
+    public void jobWasExecuted(JobExecutionContext context,JobExecutionException jobException) {
         synchronized (executingJobs) {
             executingJobs.remove(((OperableTrigger)context.getTrigger()).getFireInstanceId());
         }
@@ -2425,8 +2420,7 @@ class ExecutingJobsManager implements JobListener {
 
     public List<JobExecutionContext> getExecutingJobs() {
         synchronized (executingJobs) {
-            return java.util.Collections.unmodifiableList(new ArrayList<JobExecutionContext>(
-                    executingJobs.values()));
+            return java.util.Collections.unmodifiableList(new ArrayList<JobExecutionContext>(executingJobs.values()));
         }
     }
 

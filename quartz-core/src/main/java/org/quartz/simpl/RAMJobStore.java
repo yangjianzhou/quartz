@@ -1007,7 +1007,6 @@ public class RAMJobStore implements JobStore {
                 }
             }
         }
-
         return trigList;
     }
 
@@ -1453,8 +1452,9 @@ public class RAMJobStore implements JobStore {
 
                 try {
                     tw = timeTriggers.first();
-                    if (tw == null)
+                    if (tw == null) {
                         break;
+                    }
                     timeTriggers.remove(tw);
                 } catch (java.util.NoSuchElementException nsee) {
                     break;
@@ -1496,13 +1496,15 @@ public class RAMJobStore implements JobStore {
                     batchEnd = Math.max(tw.trigger.getNextFireTime().getTime(), System.currentTimeMillis()) + timeWindow;
                 }
                 result.add(trig);
-                if (result.size() == maxCount)
+                if (result.size() == maxCount) {
                     break;
+                }
             }
 
             // If we did excluded triggers to prevent ACQUIRE state due to DisallowConcurrentExecution, we need to add them back to store.
-            if (excludedTriggers.size() > 0)
+            if (excludedTriggers.size() > 0) {
                 timeTriggers.addAll(excludedTriggers);
+            }
             return result;
         }
     }

@@ -186,6 +186,9 @@ public class JobRunShell extends SchedulerListenerSupport implements Runnable {
                 // execute the job
                 try {
                     log.debug("Calling execute on job " + jobDetail.getKey());
+                    /**
+                     * 执行任务的execute方法
+                     */
                     job.execute(jec);
                     endTime = System.currentTimeMillis();
                 } catch (JobExecutionException jee) {
@@ -301,10 +304,8 @@ public class JobRunShell extends SchedulerListenerSupport implements Runnable {
                             + "(Job will NOT be executed!). trigger= "
                             + jobExCtxt.getTrigger().getKey() + " job= "
                             + jobExCtxt.getJobDetail().getKey(), se);
-
             return false;
         }
-
         return true;
     }
 
@@ -317,10 +318,8 @@ public class JobRunShell extends SchedulerListenerSupport implements Runnable {
                             + "(error will be ignored). trigger= "
                             + jobExCtxt.getTrigger().getKey() + " job= "
                             + jobExCtxt.getJobDetail().getKey(), se);
-
             return false;
         }
-
         return true;
     }
 

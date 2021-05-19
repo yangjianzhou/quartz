@@ -406,7 +406,6 @@ public class QuartzSchedulerThread extends Thread {
                             }
 
                         }
-
                         continue; // while (!halted)
                     }
                 } else { // if(availThreadCount > 0)

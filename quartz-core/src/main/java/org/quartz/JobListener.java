@@ -86,7 +86,6 @@ public interface JobListener {
      * <code>triggered(xx)</code> method has been called.
      * </p>
      */
-    void jobWasExecuted(JobExecutionContext context,
-            JobExecutionException jobException);
+    void jobWasExecuted(JobExecutionContext context,JobExecutionException jobException);
 
 }
