@@ -88,8 +88,7 @@ public class JobExecutionContextImpl implements java.io.Serializable, JobExecuti
      * Create a JobExcecutionContext with the given context data.
      * </p>
      */
-    public JobExecutionContextImpl(Scheduler scheduler,
-            TriggerFiredBundle firedBundle, Job job) {
+    public JobExecutionContextImpl(Scheduler scheduler,TriggerFiredBundle firedBundle, Job job) {
         this.scheduler = scheduler;
         this.trigger = firedBundle.getTrigger();
         this.calendar = firedBundle.getCalendar();
@@ -102,6 +101,9 @@ public class JobExecutionContextImpl implements java.io.Serializable, JobExecuti
         this.nextFireTime = firedBundle.getNextFireTime();
         
         this.jobDataMap = new JobDataMap();
+        /**
+         * 相应的参数会传过来
+         */
         this.jobDataMap.putAll(jobDetail.getJobDataMap());
         this.jobDataMap.putAll(trigger.getJobDataMap());
     }

@@ -527,7 +527,6 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         // QTZ-212 : calling new schedulerStarting() method on the listeners
         // right after entering start()
         notifySchedulerListenersStarting();
-
         if (initialStart == null) {
             initialStart = new Date();
             this.resources.getJobStore().schedulerStarted();            
@@ -535,11 +534,8 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         } else {
             resources.getJobStore().schedulerResumed();
         }
-
         schedThread.togglePause(false);
-
         getLog().info("Scheduler " + resources.getUniqueIdentifier() + " started.");
-        
         notifySchedulerListenersStarted();
     }
 
@@ -656,9 +652,7 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         
         shuttingDown = true;
 
-        getLog().info(
-                "Scheduler " + resources.getUniqueIdentifier()
-                        + " shutting down.");
+        getLog().info("Scheduler " + resources.getUniqueIdentifier()  + " shutting down.");
         // boolean removeMgmtSvr = false;
         // if (registeredManagementServerBind != null) {
         // ManagementServer standaloneRestServer =
@@ -730,9 +724,7 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
 
         holdToPreventGC.clear();
         
-        getLog().info(
-                "Scheduler " + resources.getUniqueIdentifier()
-                        + " shutdown complete.");
+        getLog().info("Scheduler " + resources.getUniqueIdentifier() + " shutdown complete.");
     }
 
     /**
@@ -843,7 +835,6 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         notifySchedulerListenersJobAdded(jobDetail);
         notifySchedulerThread(trigger.getNextFireTime().getTime());
         notifySchedulerListenersSchduled(trigger);
-
         return ft;
     }
 
@@ -1623,10 +1614,8 @@ J     *
      * </p>
      */
     public void addInternalJobListener(JobListener jobListener) {
-        if (jobListener.getName() == null
-                || jobListener.getName().length() == 0) {
-            throw new IllegalArgumentException(
-                    "JobListener name cannot be empty.");
+        if (jobListener.getName() == null|| jobListener.getName().length() == 0) {
+            throw new IllegalArgumentException("JobListener name cannot be empty.");
         }
         
         synchronized (internalJobListeners) {
@@ -2198,9 +2187,7 @@ J     *
             try {
                 sl.schedulerStarting();
             } catch (Exception e) {
-                getLog().error(
-                        "Error while notifying SchedulerListener of startup.",
-                        e);
+                getLog().error( "Error while notifying SchedulerListener of startup.",e);
             }
         }
     }
@@ -2246,9 +2233,7 @@ J     *
             try {
                 sl.jobAdded(jobDetail);
             } catch (Exception e) {
-                getLog().error(
-                        "Error while notifying SchedulerListener of JobAdded.",
-                        e);
+                getLog().error( "Error while notifying SchedulerListener of JobAdded.", e);
             }
         }
     }

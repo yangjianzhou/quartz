@@ -246,8 +246,7 @@ public class RAMJobStore implements JobStore {
      *           if a <code>Job</code> with the same name/group already
      *           exists.
      */
-    public void storeJobAndTrigger(JobDetail newJob,
-            OperableTrigger newTrigger) throws JobPersistenceException {
+    public void storeJobAndTrigger(JobDetail newJob, OperableTrigger newTrigger) throws JobPersistenceException {
         storeJob(newJob, false);
         storeTrigger(newTrigger, false);
     }
@@ -267,8 +266,7 @@ public class RAMJobStore implements JobStore {
      *           if a <code>Job</code> with the same name/group already
      *           exists, and replaceExisting is set to false.
      */
-    public void storeJob(JobDetail newJob,
-            boolean replaceExisting) throws ObjectAlreadyExistsException {
+    public void storeJob(JobDetail newJob, boolean replaceExisting) throws ObjectAlreadyExistsException {
         JobWrapper jw = new JobWrapper((JobDetail)newJob.clone());
 
         boolean repl = false;
@@ -415,7 +413,7 @@ public class RAMJobStore implements JobStore {
                 }
                 removeTrigger(newTrigger.getKey(), false);
             }
-    
+
             if (retrieveJob(newTrigger.getJobKey()) == null) {
                 throw new JobPersistenceException("The job (" + newTrigger.getJobKey() + ") referenced by the trigger does not exist.");
             }
@@ -1552,8 +1550,9 @@ public class RAMJobStore implements JobStore {
                 Calendar cal = null;
                 if (tw.trigger.getCalendarName() != null) {
                     cal = retrieveCalendar(tw.trigger.getCalendarName());
-                    if(cal == null)
+                    if(cal == null) {
                         continue;
+                    }
                 }
                 Date prevFireTime = trigger.getPreviousFireTime();
                 // in case trigger was replaced between acquiring and firing
@@ -1564,8 +1563,7 @@ public class RAMJobStore implements JobStore {
                 //tw.state = TriggerWrapper.STATE_EXECUTING;
                 tw.state = TriggerWrapper.STATE_WAITING;
 
-                TriggerFiredBundle bndle = new TriggerFiredBundle(retrieveJob(
-                        tw.jobKey), trigger, cal,
+                TriggerFiredBundle bndle = new TriggerFiredBundle(retrieveJob(tw.jobKey), trigger, cal,
                         false, new Date(), trigger.getPreviousFireTime(), prevFireTime,
                         trigger.getNextFireTime());
 
@@ -1604,8 +1602,7 @@ public class RAMJobStore implements JobStore {
      * is stateful.
      * </p>
      */
-    public void triggeredJobComplete(OperableTrigger trigger,
-            JobDetail jobDetail, CompletedExecutionInstruction triggerInstCode) {
+    public void triggeredJobComplete(OperableTrigger trigger,JobDetail jobDetail, CompletedExecutionInstruction triggerInstCode) {
 
         synchronized (lock) {
 

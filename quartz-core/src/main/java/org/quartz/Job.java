@@ -73,7 +73,6 @@ public interface Job {
      * @throws JobExecutionException
      *           if there is an exception while executing the job.
      */
-    void execute(JobExecutionContext context)
-        throws JobExecutionException;
+    void execute(JobExecutionContext context) throws JobExecutionException;
 
 }

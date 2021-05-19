@@ -289,29 +289,28 @@ public class QuartzSchedulerThread extends Thread {
                          */
                         triggers = qsRsrcs.getJobStore().acquireNextTriggers(now + idleWaitTime, Math.min(availThreadCount, qsRsrcs.getMaxBatchSize()), qsRsrcs.getBatchTimeWindow());
                         acquiresFailed = 0;
-                        if (log.isDebugEnabled())
+                        if (log.isDebugEnabled()) {
                             log.debug("batch acquisition of " + (triggers == null ? 0 : triggers.size()) + " triggers");
+                        }
                     } catch (JobPersistenceException jpe) {
                         if (acquiresFailed == 0) {
-                            qs.notifySchedulerListenersError(
-                                "An error occurred while scanning for the next triggers to fire.",
-                                jpe);
+                            qs.notifySchedulerListenersError("An error occurred while scanning for the next triggers to fire.", jpe);
                         }
-                        if (acquiresFailed < Integer.MAX_VALUE)
+                        if (acquiresFailed < Integer.MAX_VALUE) {
                             acquiresFailed++;
+                        }
                         continue;
                     } catch (RuntimeException e) {
                         if (acquiresFailed == 0) {
-                            getLog().error("quartzSchedulerThreadLoop: RuntimeException "
-                                    +e.getMessage(), e);
+                            getLog().error("quartzSchedulerThreadLoop: RuntimeException " +e.getMessage(), e);
                         }
-                        if (acquiresFailed < Integer.MAX_VALUE)
+                        if (acquiresFailed < Integer.MAX_VALUE) {
                             acquiresFailed++;
+                        }
                         continue;
                     }
 
                     if (triggers != null && !triggers.isEmpty()) {
-
                         now = System.currentTimeMillis();
                         long triggerTime = triggers.get(0).getNextFireTime().getTime();
                         long timeUntilTrigger = triggerTime - now;
@@ -326,8 +325,9 @@ public class QuartzSchedulerThread extends Thread {
                                         // on 'synchronize', so we must recompute
                                         now = System.currentTimeMillis();
                                         timeUntilTrigger = triggerTime - now;
-                                        if(timeUntilTrigger >= 1)
+                                        if(timeUntilTrigger >= 1) {
                                             sigLock.wait(timeUntilTrigger);
+                                        }
                                     } catch (InterruptedException ignore) {
                                     }
                                 }
@@ -340,9 +340,9 @@ public class QuartzSchedulerThread extends Thread {
                         }
 
                         // this happens if releaseIfScheduleChangedSignificantly decided to release triggers
-                        if(triggers.isEmpty())
+                        if(triggers.isEmpty()) {
                             continue;
-
+                        }
                         // set triggers to 'executing'
                         List<TriggerFiredResult> bndles = new ArrayList<TriggerFiredResult>();
 
@@ -353,12 +353,11 @@ public class QuartzSchedulerThread extends Thread {
                         if(goAhead) {
                             try {
                                 List<TriggerFiredResult> res = qsRsrcs.getJobStore().triggersFired(triggers);
-                                if(res != null)
+                                if(res != null) {
                                     bndles = res;
+                                }
                             } catch (SchedulerException se) {
-                                qs.notifySchedulerListenersError(
-                                        "An error occurred while firing triggers '"
-                                                + triggers + "'", se);
+                                qs.notifySchedulerListenersError("An error occurred while firing triggers '" + triggers + "'", se);
                                 //QTZ-179 : a problem occurred interacting with the triggers from the db
                                 //we release them and loop again
                                 for (int i = 0; i < triggers.size(); i++) {
@@ -366,7 +365,6 @@ public class QuartzSchedulerThread extends Thread {
                                 }
                                 continue;
                             }
-
                         }
 
                         for (int i = 0; i < bndles.size(); i++) {
@@ -395,7 +393,9 @@ public class QuartzSchedulerThread extends Thread {
                                 qsRsrcs.getJobStore().triggeredJobComplete(triggers.get(i), bndle.getJobDetail(), CompletedExecutionInstruction.SET_ALL_JOB_TRIGGERS_ERROR);
                                 continue;
                             }
-
+                            /**
+                             * 真正的触发任务
+                             */
                             if (!qsRsrcs.getThreadPool().runInThread(shell)) {
                                 // this case should never happen, as it is indicative of the
                                 // scheduler being shutdown or a bug in the thread pool or

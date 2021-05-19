@@ -22,9 +22,12 @@ public class DemoApplication {
         // and start it off
         scheduler.start();
 
+        JobDataMap dataMap = new JobDataMap();
+        dataMap.putAsString("1",2);
         // define the job and tie it to our HelloJob class
         JobDetail job = new JobBuilder().ofType(HelloJob.class)
                 .withIdentity("job1", "group1")
+                .setJobData(dataMap)
                 .build();
 
         // Trigger the job to run now, and then repeat every 40 seconds

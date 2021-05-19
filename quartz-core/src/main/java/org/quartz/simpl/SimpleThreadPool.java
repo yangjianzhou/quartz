@@ -235,9 +235,9 @@ public class SimpleThreadPool implements ThreadPool {
 
     public void initialize() throws SchedulerConfigException {
 
-        if(workers != null && workers.size() > 0) // already initialized...
+        if(workers != null && workers.size() > 0) {// already initialized...
             return;
-        
+        }
         if (count <= 0) {
             throw new SchedulerConfigException("Thread count must be > 0");
         }
@@ -574,8 +574,7 @@ public class SimpleThreadPool implements ThreadPool {
                     }
                 } catch (Throwable exceptionInRunnable) {
                     try {
-                        getLog().error("Error while executing the Runnable: ",
-                            exceptionInRunnable);
+                        getLog().error("Error while executing the Runnable: ",exceptionInRunnable);
                     } catch(Exception e) {
                         // ignore to help with a tomcat glitch
                     }
