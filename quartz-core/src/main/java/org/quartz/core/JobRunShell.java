@@ -133,6 +133,9 @@ public class JobRunShell extends SchedulerListenerSupport implements Runnable {
             sched.notifySchedulerListenersError("An error occured instantiating job to be executed. job= '" + jobDetail.getKey() + "'", se);
             throw se;
         }
+        /**
+         * 创建任务执行上下文
+         */
         this.jec = new JobExecutionContextImpl(scheduler, firedTriggerBundle, job);
     }
 

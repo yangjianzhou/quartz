@@ -176,7 +176,11 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
     private boolean signalOnSchedulingChange = true;
 
     private volatile boolean closed = false;
+    /**
+     * 是否shutdown的标示
+     */
     private volatile boolean shuttingDown = false;
+
     private boolean boundRemotely = false;
 
     private QuartzSchedulerMBean jmxBean = null;
@@ -523,6 +527,9 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
      */
     public void standby() {
         resources.getJobStore().schedulerPaused();
+        /**
+         * 通知调度线程暂停执行
+         */
         schedThread.togglePause(true);
         getLog().info( "Scheduler " + resources.getUniqueIdentifier() + " paused.");
         notifySchedulerListenersInStandbyMode();        
@@ -606,51 +613,26 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         shuttingDown = true;
 
         getLog().info("Scheduler " + resources.getUniqueIdentifier()  + " shutting down.");
-        // boolean removeMgmtSvr = false;
-        // if (registeredManagementServerBind != null) {
-        // ManagementServer standaloneRestServer =
-        // MGMT_SVR_BY_BIND.get(registeredManagementServerBind);
-        //
-        // try {
-        // standaloneRestServer.unregister(this);
-        //
-        // if (!standaloneRestServer.hasRegistered()) {
-        // removeMgmtSvr = true;
-        // standaloneRestServer.stop();
-        // }
-        // } catch (Exception e) {
-        // getLog().warn("Failed to shutdown the ManagementRESTService", e);
-        // } finally {
-        // if (removeMgmtSvr) {
-        // MGMT_SVR_BY_BIND.remove(registeredManagementServerBind);
-        // }
-        //
-        // registeredManagementServerBind = null;
-        // }
-        // }
-
         standby();
 
         schedThread.halt(waitForJobsToComplete);
         
         notifySchedulerListenersShuttingdown();
         
-        if( (resources.isInterruptJobsOnShutdown() && !waitForJobsToComplete) || 
-                (resources.isInterruptJobsOnShutdownWithWait() && waitForJobsToComplete)) {
+        if( (resources.isInterruptJobsOnShutdown() && !waitForJobsToComplete) || (resources.isInterruptJobsOnShutdownWithWait() && waitForJobsToComplete)) {
             List<JobExecutionContext> jobs = getCurrentlyExecutingJobs();
             for(JobExecutionContext job: jobs) {
-                if(job.getJobInstance() instanceof InterruptableJob)
+                if(job.getJobInstance() instanceof InterruptableJob) {
                     try {
-                        ((InterruptableJob)job.getJobInstance()).interrupt();
+                        ((InterruptableJob) job.getJobInstance()).interrupt();
                     } catch (Throwable e) {
                         // do nothing, this was just a courtesy effort
                         getLog().warn("Encountered error when interrupting job {} during shutdown: {}", job.getJobDetail().getKey(), e);
                     }
+                }
             }
         }
-        
         resources.getThreadPool().shutdown(waitForJobsToComplete);
-        
         closed = true;
 
         if (resources.getJMXExport()) {
@@ -1751,11 +1733,13 @@ J     *
     
     private boolean matchJobListener(JobListener listener, JobKey key) {
         List<Matcher<JobKey>> matchers = getListenerManager().getJobListenerMatchers(listener.getName());
-        if(matchers == null)
+        if(matchers == null) {
             return true;
+        }
         for(Matcher<JobKey> matcher: matchers) {
-            if(matcher.isMatch(key))
+            if(matcher.isMatch(key)) {
                 return true;
+            }
         }
         return false;
     }
@@ -2106,9 +2090,7 @@ J     *
             try {
                 sl.schedulerInStandbyMode();
             } catch (Exception e) {
-                getLog().error(
-                        "Error while notifying SchedulerListener of inStandByMode.",
-                        e);
+                getLog().error( "Error while notifying SchedulerListener of inStandByMode.", e);
             }
         }
     }

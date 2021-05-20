@@ -25,10 +25,12 @@ public class ClassUtils {
     
     public static boolean isAnnotationPresent(Class<?> clazz, Class<? extends Annotation> a) {
         for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
-            if (c.isAnnotationPresent(a))
+            if (c.isAnnotationPresent(a)) {
                 return true;
-            if(isAnnotationPresentOnInterfaces(c, a))
+            }
+            if(isAnnotationPresentOnInterfaces(c, a)) {
                 return true;
+            }
         }
         return false;
     }

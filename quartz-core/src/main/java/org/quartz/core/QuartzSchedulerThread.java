@@ -149,7 +149,6 @@ public class QuartzSchedulerThread extends Thread {
     void togglePause(boolean pause) {
         synchronized (sigLock) {
             paused = pause;
-
             if (paused) {
                 signalSchedulingChange(0);
             } else {
@@ -243,11 +242,17 @@ public class QuartzSchedulerThread extends Thread {
     @Override
     public void run() {
         int acquiresFailed = 0;
-
+        /**
+         * 如果没有被挂起
+         * 只有shutdown的时候，才会被挂起
+         */
         while (!halted.get()) {
             try {
                 // check if we're supposed to pause...
                 synchronized (sigLock) {
+                    /**
+                     * 如果需要暂停执行，且没有被挂起，在阻塞等待
+                     */
                     while (paused && !halted.get()) {
                         try {
                             // wait until togglePause(false) is called...
@@ -259,7 +264,10 @@ public class QuartzSchedulerThread extends Thread {
                         // wait again after unpausing
                         acquiresFailed = 0;
                     }
-
+                    /**
+                     * 如果被挂起了，则直接退出
+                     * 使用AtomicBoolean类型，表示是外部挂起这个线程，使得线程可见性
+                     */
                     if (halted.get()) {
                         break;
                     }
@@ -274,10 +282,11 @@ public class QuartzSchedulerThread extends Thread {
                     } catch (Exception ignore) {
                     }
                 }
-
+                /**
+                 * 获取可用的执行线程
+                 */
                 int availThreadCount = qsRsrcs.getThreadPool().blockForAvailableThreads();
                 if(availThreadCount > 0) { // will always be true, due to semantics of blockForAvailableThreads...
-
                     List<OperableTrigger> triggers;
 
                     long now = System.currentTimeMillis();
@@ -314,6 +323,9 @@ public class QuartzSchedulerThread extends Thread {
                         now = System.currentTimeMillis();
                         long triggerTime = triggers.get(0).getNextFireTime().getTime();
                         long timeUntilTrigger = triggerTime - now;
+                        /**
+                         * 把当前多的时间消耗掉
+                         */
                         while(timeUntilTrigger > 2) {
                             synchronized (sigLock) {
                                 if (halted.get()) {
@@ -348,6 +360,9 @@ public class QuartzSchedulerThread extends Thread {
 
                         boolean goAhead = true;
                         synchronized(sigLock) {
+                            /**
+                             * 如果没有被挂起，则可以继续执行
+                             */
                             goAhead = !halted.get();
                         }
                         if(goAhead) {
@@ -387,6 +402,9 @@ public class QuartzSchedulerThread extends Thread {
 
                             JobRunShell shell = null;
                             try {
+                                /**
+                                 * 创建任务执行shell
+                                 */
                                 shell = qsRsrcs.getJobRunShellFactory().createJobRunShell(bndle);
                                 shell.initialize(qs);
                             } catch (SchedulerException se) {
@@ -410,6 +428,9 @@ public class QuartzSchedulerThread extends Thread {
                     }
                 } else { // if(availThreadCount > 0)
                     // should never happen, if threadPool.blockForAvailableThreads() follows contract
+                    /**
+                     * 表示没有线程池中没有可用线程执行，直接进行while的下一次循环
+                     */
                     continue; // while (!halted)
                 }
 
@@ -456,11 +477,12 @@ public class QuartzSchedulerThread extends Thread {
 
 
         // sanity check per getAcquireRetryDelay specification
-        if (delay < MIN_DELAY)
+        if (delay < MIN_DELAY) {
             delay = MIN_DELAY;
-        if (delay > MAX_DELAY)
+        }
+        if (delay > MAX_DELAY) {
             delay = MAX_DELAY;
-
+        }
         return delay;
     }
 
@@ -499,21 +521,22 @@ public class QuartzSchedulerThread extends Thread {
 
         synchronized(sigLock) {
 
-            if (!isScheduleChanged())
+            if (!isScheduleChanged()) {
                 return false;
-
+            }
             boolean earlier = false;
 
-            if(getSignaledNextFireTime() == 0)
+            if(getSignaledNextFireTime() == 0) {
                 earlier = true;
-            else if(getSignaledNextFireTime() < oldTime )
+            }else if(getSignaledNextFireTime() < oldTime ) {
                 earlier = true;
-
+            }
             if(earlier) {
                 // so the new time is considered earlier, but is it enough earlier?
                 long diff = oldTime - System.currentTimeMillis();
-                if(diff < (qsRsrcs.getJobStore().supportsPersistence() ? 70L : 7L))
+                if(diff < (qsRsrcs.getJobStore().supportsPersistence() ? 70L : 7L)) {
                     earlier = false;
+                }
             }
 
             if(clearSignal) {

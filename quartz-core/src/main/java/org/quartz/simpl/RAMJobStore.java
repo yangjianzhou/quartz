@@ -800,8 +800,9 @@ public class RAMJobStore implements JobStore {
     public Calendar retrieveCalendar(String calName) {
         synchronized (lock) {
             Calendar cal = calendarsByName.get(calName);
-            if(cal != null)
+            if(cal != null) {
                 return (Calendar) cal.clone();
+            }
             return null;
         }
     }
@@ -1393,8 +1394,7 @@ public class RAMJobStore implements JobStore {
         }
 
         Date tnft = tw.trigger.getNextFireTime();
-        if (tnft == null || tnft.getTime() > misfireTime 
-                || tw.trigger.getMisfireInstruction() == Trigger.MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY) { 
+        if (tnft == null || tnft.getTime() > misfireTime || tw.trigger.getMisfireInstruction() == Trigger.MISFIRE_INSTRUCTION_IGNORE_MISFIRE_POLICY) {
             return false; 
         }
 
@@ -1442,9 +1442,9 @@ public class RAMJobStore implements JobStore {
             long batchEnd = noLaterThan;
             
             // return empty list if store has no triggers.
-            if (timeTriggers.size() == 0)
+            if (timeTriggers.size() == 0) {
                 return result;
-            
+            }
             while (true) {
                 TriggerWrapper tw;
 
@@ -1457,7 +1457,9 @@ public class RAMJobStore implements JobStore {
                 } catch (java.util.NoSuchElementException nsee) {
                     break;
                 }
-
+                /**
+                 * TODO 什么时候会出现这个情况
+                 */
                 if (tw.trigger.getNextFireTime() == null) {
                     continue;
                 }
@@ -1469,6 +1471,9 @@ public class RAMJobStore implements JobStore {
                     continue;
                 }
 
+                /**
+                 * 如果下次触发时间大于batchEnd，则直接返回
+                 */
                 if (tw.getTrigger().getNextFireTime().getTime() > batchEnd) {
                     timeTriggers.add(tw);
                     break;
@@ -1478,6 +1483,9 @@ public class RAMJobStore implements JobStore {
                 // put it back into the timeTriggers set and continue to search for next trigger.
                 JobKey jobKey = tw.trigger.getJobKey();
                 JobDetail job = jobsByKey.get(tw.trigger.getJobKey()).jobDetail;
+                /**
+                 * 不允许并发执行
+                 */
                 if (job.isConcurrentExectionDisallowed()) {
                     if (acquiredJobKeysForNoConcurrentExec.contains(jobKey)) {
                         excludedTriggers.add(tw);
@@ -1494,6 +1502,9 @@ public class RAMJobStore implements JobStore {
                     batchEnd = Math.max(tw.trigger.getNextFireTime().getTime(), System.currentTimeMillis()) + timeWindow;
                 }
                 result.add(trig);
+                /**
+                 * 如果结果集大小等于允许触发的大小，则直接返回
+                 */
                 if (result.size() == maxCount) {
                     break;
                 }
