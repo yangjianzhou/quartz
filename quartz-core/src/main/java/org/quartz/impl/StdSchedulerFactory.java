@@ -1304,8 +1304,9 @@ public class StdSchedulerFactory implements SchedulerFactory {
 
             rsrcs.setThreadPool(tp);
             if(tp instanceof SimpleThreadPool) {
-                if(threadsInheritInitalizersClassLoader)
-                    ((SimpleThreadPool)tp).setThreadsInheritContextClassLoaderOfInitializingThread(threadsInheritInitalizersClassLoader);
+                if(threadsInheritInitalizersClassLoader) {
+                    ((SimpleThreadPool) tp).setThreadsInheritContextClassLoaderOfInitializingThread(threadsInheritInitalizersClassLoader);
+                }
             }
             /**
              * 启动线程池中的执行线程
@@ -1364,15 +1365,15 @@ public class StdSchedulerFactory implements SchedulerFactory {
             js.setInstanceName(schedName);
             js.setThreadPoolSize(tp.getPoolSize());
             js.initialize(loadHelper, qs.getSchedulerSignaler());
-
             jrsf.initialize(scheduler);
-            
+
+            /**
+             *  RMI或者JMX相关
+             */
             qs.initialize();
     
             getLog().info("Quartz scheduler '" + scheduler.getSchedulerName() + "' initialized from " + propSrc);
-    
             getLog().info("Quartz scheduler version: " + qs.getVersion());
-    
             // prevents the repository from being garbage collected
             qs.addNoGCObject(schedRep);
             // prevents the db manager from being garbage collected
@@ -1438,9 +1439,7 @@ public class StdSchedulerFactory implements SchedulerFactory {
     }
 
 
-    private void setBeanProps(Object obj, Properties props)
-        throws NoSuchMethodException, IllegalAccessException,
-            java.lang.reflect.InvocationTargetException,
+    private void setBeanProps(Object obj, Properties props) throws NoSuchMethodException, IllegalAccessException, java.lang.reflect.InvocationTargetException,
             IntrospectionException, SchedulerConfigException {
         props.remove("class");
         props.remove(PoolingConnectionProvider.POOLING_PROVIDER);

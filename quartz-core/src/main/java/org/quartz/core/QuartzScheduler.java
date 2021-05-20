@@ -237,63 +237,16 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         try {
             bind();
         } catch (Exception re) {
-            throw new SchedulerException(
-                    "Unable to bind scheduler to RMI Registry.", re);
+            throw new SchedulerException("Unable to bind scheduler to RMI Registry.", re);
         }
         
         if (resources.getJMXExport()) {
             try {
                 registerJMX();
             } catch (Exception e) {
-                throw new SchedulerException(
-                        "Unable to register scheduler with MBeanServer.", e);
+                throw new SchedulerException("Unable to register scheduler with MBeanServer.", e);
             }
         }
-
-        // ManagementRESTServiceConfiguration managementRESTServiceConfiguration
-        // = resources.getManagementRESTServiceConfiguration();
-        //
-        // if (managementRESTServiceConfiguration != null &&
-        // managementRESTServiceConfiguration.isEnabled()) {
-        // try {
-        // /**
-        // * ManagementServer will only be instantiated and started if one
-        // * isn't already running on the configured port for this class
-        // * loader space.
-        // */
-        // synchronized (QuartzScheduler.class) {
-        // if
-        // (!MGMT_SVR_BY_BIND.containsKey(managementRESTServiceConfiguration.getBind()))
-        // {
-        // Class<?> managementServerImplClass =
-        // Class.forName("org.quartz.management.ManagementServerImpl");
-        // Class<?> managementRESTServiceConfigurationClass[] = new Class[] {
-        // managementRESTServiceConfiguration.getClass() };
-        // Constructor<?> managementRESTServiceConfigurationConstructor =
-        // managementServerImplClass
-        // .getConstructor(managementRESTServiceConfigurationClass);
-        // Object arglist[] = new Object[] { managementRESTServiceConfiguration
-        // };
-        // ManagementServer embeddedRESTServer = ((ManagementServer)
-        // managementRESTServiceConfigurationConstructor.newInstance(arglist));
-        // embeddedRESTServer.start();
-        // MGMT_SVR_BY_BIND.put(managementRESTServiceConfiguration.getBind(),
-        // embeddedRESTServer);
-        // }
-        // registeredManagementServerBind =
-        // managementRESTServiceConfiguration.getBind();
-        // ManagementServer embeddedRESTServer =
-        // MGMT_SVR_BY_BIND.get(registeredManagementServerBind);
-        // embeddedRESTServer.register(this);
-        // }
-        // } catch (Exception e) {
-        // throw new
-        // SchedulerException("Unable to start the scheduler management REST service",
-        // e);
-        // }
-        // }
-
-        
         getLog().info("Scheduler meta-data: " +
                 (new SchedulerMetaData(getSchedulerName(),
                         getSchedulerInstanceId(), getClass(), boundRemotely, runningSince() != null, 

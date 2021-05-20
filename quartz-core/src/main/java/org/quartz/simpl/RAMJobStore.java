@@ -149,9 +149,7 @@ public class RAMJobStore implements JobStore {
      * </p>
      */
     public void initialize(ClassLoadHelper loadHelper, SchedulerSignaler schedSignaler) {
-
         this.signaler = schedSignaler;
-
         getLog().info("RAMJobStore initialized.");
     }
 
