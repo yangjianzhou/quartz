@@ -281,13 +281,9 @@ public class SimpleThreadPool implements ThreadPool {
             if (threadPrefix == null) {
                 threadPrefix = schedulerInstanceName + "_Worker";
             }
-            WorkerThread wt = new WorkerThread(this, threadGroup,
-                threadPrefix + "-" + i,
-                getThreadPriority(),
-                isMakeThreadsDaemons());
+            WorkerThread wt = new WorkerThread(this, threadGroup,threadPrefix + "-" + i, getThreadPriority(), isMakeThreadsDaemons());
             if (isThreadsInheritContextClassLoaderOfInitializingThread()) {
-                wt.setContextClassLoader(Thread.currentThread()
-                        .getContextClassLoader());
+                wt.setContextClassLoader(Thread.currentThread().getContextClassLoader());
             }
             workers.add(wt);
         }
@@ -318,15 +314,12 @@ public class SimpleThreadPool implements ThreadPool {
      * </p>
      */
     public void shutdown(boolean waitForJobsToComplete) {
-
         synchronized (nextRunnableLock) {
             getLog().debug("Shutting down threadpool...");
-
             isShutdown = true;
-
-            if(workers == null) // case where the pool wasn't even initialize()ed
+            if (workers == null){
                 return;
-
+            }
             // signal each worker thread to shut down
             Iterator<WorkerThread> workerThreads = workers.iterator();
             while(workerThreads.hasNext()) {
@@ -334,13 +327,11 @@ public class SimpleThreadPool implements ThreadPool {
                 wt.shutdown();
                 availWorkers.remove(wt);
             }
-
             // Give waiting (wait(1000)) worker threads a chance to shut down.
             // Active worker threads will shut down after finishing their
             // current job.
             nextRunnableLock.notifyAll();
-
-            if (waitForJobsToComplete == true) {
+            if (waitForJobsToComplete) {
 
                 boolean interrupted = false;
                 try {
@@ -352,15 +343,11 @@ public class SimpleThreadPool implements ThreadPool {
                             interrupted = true;
                         }
                     }
-
                     // Wait until all worker threads are shut down
                     while (busyWorkers.size() > 0) {
                         WorkerThread wt = (WorkerThread) busyWorkers.getFirst();
                         try {
-                            getLog().debug(
-                                    "Waiting for thread " + wt.getName()
-                                            + " to shut down");
-
+                            getLog().debug("Waiting for thread " + wt.getName() + " to shut down");
                             // note: with waiting infinite time the
                             // application may appear to 'hang'.
                             nextRunnableLock.wait(2000);
@@ -368,7 +355,6 @@ public class SimpleThreadPool implements ThreadPool {
                             interrupted = true;
                         }
                     }
-
                     workerThreads = workers.iterator();
                     while(workerThreads.hasNext()) {
                         WorkerThread wt = (WorkerThread) workerThreads.next();
@@ -384,7 +370,6 @@ public class SimpleThreadPool implements ThreadPool {
                         Thread.currentThread().interrupt();
                     }
                 }
-
                 getLog().debug("No executing jobs remaining, all threads stopped.");
             }
             getLog().debug("Shutdown of threadpool complete.");
@@ -410,6 +395,9 @@ public class SimpleThreadPool implements ThreadPool {
             handoffPending = true;
 
             // Wait until a worker thread is available
+            /**
+             * 没有可用的执行线程，并且没有没有shutdown
+             */
             while ((availWorkers.size() < 1) && !isShutdown) {
                 try {
                     nextRunnableLock.wait(500);
@@ -417,13 +405,22 @@ public class SimpleThreadPool implements ThreadPool {
                 }
             }
 
+            /**
+             * 如果没有shutdown
+             */
             if (!isShutdown) {
+                /**
+                 * 获取执行线程，并且通知进行执行
+                 */
                 WorkerThread wt = (WorkerThread)availWorkers.removeFirst();
                 busyWorkers.add(wt);
                 wt.run(runnable);
             } else {
                 // If the thread pool is going down, execute the Runnable
                 // within a new additional worker thread (no thread from the pool).
+                /**
+                 * 如果shutdown，则新建线程，进行执行
+                 */
                 WorkerThread wt = new WorkerThread(this, threadGroup,"WorkerThread-LastJob", prio, isMakeThreadsDaemons(), runnable);
                 busyWorkers.add(wt);
                 workers.add(wt);
@@ -445,7 +442,6 @@ public class SimpleThreadPool implements ThreadPool {
                 } catch (InterruptedException ignore) {
                 }
             }
-
             return availWorkers.size();
         }
     }
@@ -500,9 +496,7 @@ public class SimpleThreadPool implements ThreadPool {
          * flag is set.
          * </p>
          */
-        WorkerThread(SimpleThreadPool tp, ThreadGroup threadGroup, String name,
-                     int prio, boolean isDaemon) {
-
+        WorkerThread(SimpleThreadPool tp, ThreadGroup threadGroup, String name,int prio, boolean isDaemon) {
             this(tp, threadGroup, name, prio, isDaemon, null);
         }
 
@@ -512,14 +506,13 @@ public class SimpleThreadPool implements ThreadPool {
          * the thread (one time execution).
          * </p>
          */
-        WorkerThread(SimpleThreadPool tp, ThreadGroup threadGroup, String name,
-                     int prio, boolean isDaemon, Runnable runnable) {
-
+        WorkerThread(SimpleThreadPool tp, ThreadGroup threadGroup, String name, int prio, boolean isDaemon, Runnable runnable) {
             super(threadGroup, name);
             this.tp = tp;
             this.runnable = runnable;
-            if(runnable != null)
+            if(runnable != null) {
                 runOnce = true;
+            }
             setPriority(prio);
             setDaemon(isDaemon);
         }
@@ -538,7 +531,6 @@ public class SimpleThreadPool implements ThreadPool {
                 if(runnable != null) {
                     throw new IllegalStateException("Already running a Runnable!");
                 }
-
                 runnable = newRunnable;
                 lock.notifyAll();
             }
@@ -556,10 +548,15 @@ public class SimpleThreadPool implements ThreadPool {
             while (run.get()) {
                 try {
                     synchronized(lock) {
+                        /**
+                         * 没有任务执行，并且可以执行，则等待
+                         */
                         while (runnable == null && run.get()) {
                             lock.wait(500);
                         }
-
+                        /**
+                         * 有任务，则执行JobRunShell的run方法
+                         */
                         if (runnable != null) {
                             ran = true;
                             runnable.run();

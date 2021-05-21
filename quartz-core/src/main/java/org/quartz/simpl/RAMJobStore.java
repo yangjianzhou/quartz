@@ -1543,7 +1543,6 @@ public class RAMJobStore implements JobStore {
      * </p>
      */
     public List<TriggerFiredResult> triggersFired(List<OperableTrigger> firedTriggers) {
-
         synchronized (lock) {
             List<TriggerFiredResult> results = new ArrayList<TriggerFiredResult>();
 
@@ -1569,6 +1568,9 @@ public class RAMJobStore implements JobStore {
                 // in case trigger was replaced between acquiring and firing
                 timeTriggers.remove(tw);
                 // call triggered on our copy, and the scheduler's copy
+                /**
+                 * 更新下次触发时间
+                 */
                 tw.trigger.triggered(cal);
                 trigger.triggered(cal);
                 //tw.state = TriggerWrapper.STATE_EXECUTING;
@@ -1577,7 +1579,6 @@ public class RAMJobStore implements JobStore {
                 TriggerFiredBundle bndle = new TriggerFiredBundle(retrieveJob(tw.jobKey), trigger, cal,
                         false, new Date(), trigger.getPreviousFireTime(), prevFireTime,
                         trigger.getNextFireTime());
-
                 JobDetail job = bndle.getJobDetail();
 
                 if (job.isConcurrentExectionDisallowed()) {
@@ -1594,10 +1595,12 @@ public class RAMJobStore implements JobStore {
                     blockedJobs.add(job.getKey());
                 } else if (tw.trigger.getNextFireTime() != null) {
                     synchronized (lock) {
+                        /**
+                         * 重新添加到调度集合里面
+                         */
                         timeTriggers.add(tw);
                     }
                 }
-
                 results.add(new TriggerFiredResult(bndle));
             }
             return results;

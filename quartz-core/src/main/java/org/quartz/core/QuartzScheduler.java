@@ -230,9 +230,7 @@ public class QuartzScheduler implements RemotableQuartzScheduler {
         addInternalJobListener(jobMgr);
         errLogger = new ErrorLogger();
         addInternalSchedulerListener(errLogger);
-
         signaler = new SchedulerSignalerImpl(this, this.schedThread);
-        
         getLog().info("Quartz Scheduler v." + getVersion() + " created.");
     }
 

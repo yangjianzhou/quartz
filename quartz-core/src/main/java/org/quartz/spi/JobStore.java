@@ -590,8 +590,7 @@ public interface JobStore {
      * milliseconds.
      * @see #releaseAcquiredTrigger(OperableTrigger)
      */
-    List<OperableTrigger> acquireNextTriggers(long noLaterThan, int maxCount, long timeWindow)
-        throws JobPersistenceException;
+    List<OperableTrigger> acquireNextTriggers(long noLaterThan, int maxCount, long timeWindow) throws JobPersistenceException;
 
     /**
      * Inform the <code>JobStore</code> that the scheduler no longer plans to

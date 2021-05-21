@@ -120,6 +120,9 @@ public class QuartzSchedulerThread extends Thread {
         // start the underlying thread, but put this object into the 'paused'
         // state
         // so processing doesn't start yet...
+        /**
+         * 开始时，线程是不进行调度的
+         */
         paused = true;
         halted = new AtomicBoolean(false);
     }
@@ -286,6 +289,9 @@ public class QuartzSchedulerThread extends Thread {
                  * 获取可用的执行线程
                  */
                 int availThreadCount = qsRsrcs.getThreadPool().blockForAvailableThreads();
+                /**
+                 * 如果有可用的任务执行线程，则调度线程进行调度
+                 */
                 if(availThreadCount > 0) { // will always be true, due to semantics of blockForAvailableThreads...
                     List<OperableTrigger> triggers;
 
@@ -319,6 +325,9 @@ public class QuartzSchedulerThread extends Thread {
                         continue;
                     }
 
+                    /**
+                     * 如果获取的触发器列表不为空，则继续
+                     */
                     if (triggers != null && !triggers.isEmpty()) {
                         now = System.currentTimeMillis();
                         long triggerTime = triggers.get(0).getNextFireTime().getTime();
